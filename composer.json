@@ -1,0 +1,17 @@
+{
+    "name": "ilslo/mysql.go",
+    "autoload": {
+        "psr-4": {
+            "Ilslo\\MysqlGo\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "slobozhancky",
+            "email": "slobozhancky@gmail.com"
+        }
+    ],
+    "require": {
+        "larapack/dd": "1.*"
+    }
+}
