@@ -7,6 +7,7 @@
 5. [Підготовка DB `world` до практики](#Підготовка-DB-world-до-практики)
 6. [Знайомство з запитом SELECT](#Знайомство-з-запитом-SELECT)
 7. [DISTINCT, LIMIT, OFFSET](#DISTINCT,-LIMIT,-OFFSET)
+8. [Сортування даних ORDER BY](#Сортування-даних-ORDER-BY)
 
 ## Вступ до SQL
 
@@ -444,3 +445,18 @@ SELECT * FROM user_roles WHERE role = 'admin';
 - `` SELECT `name`, `continent` FROM `country` LIMIT 5 OFFSET 5; `` - [example](https://i.imgur.com/s8Zistp.png)
 
 - `OFFSET` - має короткий запис `` SELECT `name`, `continent` FROM `country` LIMIT 5,5; `` - цей запис ідентичний `` SELECT `name`, `continent` FROM `country` LIMIT 5 OFFSET 5; ``
+
+## Сортування даних ORDER BY
+
+1. `ORDER BY` - команда, для того, щоб вказати СУБД по якому полю будемо сортувати дані
+
+- `` SELECT `name`, `population` FROM `country` ORDER BY `population`; `` - в цьому сортуванні, сортування буде відбуватись від меншого до більшого. [example](https://i.imgur.com/9CBzhss.png)
+
+- Якщо нам потрібно сортувати від **більшего до меншого**, слід використати ключове слово `desc` - ``SELECT`name`, `population`FROM`country`ORDER BY`population`desc;`
+- Якщо нам потрібно сортувати від **меншого до більшего**, слід використати ключове слово `asc` - ``SELECT`name`, `population`FROM`country`ORDER BY`population`asc;`
+
+2. Якщо нам потрібно провести сортування по двум колонкам. То спочатку, сортування пройде в першій колонці, а потім, дані в другій колонці будуть сортуватись в першої колонки. `` SELECT `region`, `population` FROM `country` ORDER BY `region`, `population`; ``[Краще на прикладі](https://i.imgur.com/cMMuKo8.png) - тут на прикладі чітко видно, що сортування відбулось в межаї регіону і вже там, сортувало по популяції
+
+3. Для команди `ORDER BY` - ми можемо вказувати не конкретні назви полів, в яких хочемо сортувтаи дані, а й просто порядкові номери цих полів `` SELECT `region`, `population`, `localname` FROM `country` ORDER BY 1, 2; ``
+
+4. Також сортування, можна задавати не відразу для всіх колонок, а для потрібних нам - [example](https://i.imgur.com/OHIpA68.png)
