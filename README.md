@@ -97,7 +97,7 @@
 
 ## Перші запити
 
-1. Створення базиданих -
+1. Створення бази даних -
    ```mysql
         CREATE DATABASE [IF NOT EXISTS] `<db_name>`
    ```
@@ -105,16 +105,16 @@
 2. Створення таблиці -
 
    ```mysql
-      CREATE DATABASE [IF NOT EXISTS] <db_name>
+      CREATE DATABASE IF NOT EXISTS `mysql.go`;
 
-      USE <db_name>
+      USE `mysql.go`;
 
-      CREATE TABLE `<table_name>`(
-         `id` AUTO_INCREMENT PRIMARY KEY,
-         `name` VARCHAR(20) NOT NULL,
-         `age` TINYINT(20) NOT NULL UNSIGNED,
+      CREATE TABLE `users`(
+         `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY ,
+         `name` VARCHAR(50) NOT NULL,
+         `age` TINYINT(20) UNSIGNED NOT NULL ,
          `phone` VARCHAR(20) NOT NULL,
-         `email` VARCHAR(20) NOT NULL,
+         `email` VARCHAR(20) NOT NULL
       );
    ```
 
@@ -125,5 +125,26 @@
    - З наповненням наче все зрозуміло, тільки нагадаю що опція `UNSIGNED` - вказує на те, що значення поля, не можу бути відємним, там самим ми розширюємо кількість позитивних даних. Тобто:
      - Знаковий TINYINT: від -128 до 127.
      - Беззнаковий TINYINT: від 0 до 255.
+   - ТУТ ЩЕ ПРИКОЛ З ТИМ, ДЕ САМЕ МАЄ РОЗТАШОВУВАТИСЬ КЛЮЧОВЕ СЛОВО `UNSIGNED`
+   -
 
-ЗАКІНЧИВ НА 11:51 частина 3
+3. Перейменування таблиці:
+
+   ```mysql
+      RENAME TABLE `<old_name> TO `<new_name>`;
+   ```
+
+4. Очищення даних в таблиці:
+
+   ```mysql
+      TRUNCATE TABLE `<table_name>`;
+   ```
+
+5. Видалення таблиці:
+   ```mysql
+      DROP TABLE `<table_name>`;
+   ```
+6. Видалення бази даних:
+   ```mysql
+      DROP DATABASE `<table_name>`;
+   ```
