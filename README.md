@@ -11,6 +11,7 @@
 9. [Фільтрування даних WHERE](#Фільтрування-даних-WHERE)
 10. [Оператор LIKE](#Оператор-LIKEE)
 11. [Обчислення полів та Аліаси](#Обчислення-полів-та-Аліаси)
+12. [Функції в MySQL](#Функції-в-MySQL)
 
 ## Вступ до SQL
 
@@ -684,4 +685,21 @@ AND manager_id IS NOT NULL;
 
 `` SELECT CONCAT(`continent`, ', ', `region`, ', ', `name`) AS `adress` FROM `country` LIMIT 10; `` - цей запит в нас використовує як обчислення полів, так і використання аліасу. А саме, ми обєднуємо інформацію з трьох стовпчиків в один рядок, та повертаємо його під псевдонімом `adress` - [example](https://i.imgur.com/g2ElkrP.png)
 
-- Також псевдоніми, можна використовувати і без ключового слова `AS` - [example](https://i.imgur.com/njiz0bt.png)
+- Також псевдоніми, можна використовувати і без ключового слова `AS` - SELECT CONCAT_WS(', ', `continent`, `region`, `name`) AS `adress` FROM `country` LIMIT 10;
+
+## Функції в MySQL
+
+1. За чим [посиланням](https://dev.mysql.com/doc/refman/8.4/en/built-in-function-reference.html) можна отриамти інфомрацію по всім існуючим функціям в MySQL
+2. `CONCAT_WS` - функція, яка допоможе обєднати строки, по певному сепаратору - `` SELECT CONCAT_WS(', ', `continent`, `region`, `name`) AS `adress` FROM `country` LIMIT 10; `` [example](https://i.imgur.com/oLa4bgZ.png)
+3. `FORMAT` - функція, яка приймає три аргументи (число, кількість цифр після коми, та локаль) `` SELECT `name`, `population`, CONCAT(FORMAT(`population` / `surfacearea`, 2), ' км²') AS density FROM `country` WHERE `population` > 10000000 ORDER BY `population` DESC LIMIT 10; `` [example](https://i.imgur.com/1ggq4sa.png)
+
+4. `LCASE`, `LOWER` - ідентичні функції, яки приводять строку до нижнього регістру `` SELECT LCASE(CONCAT_WS(', ', `continent`, `region`, `name`)) AS `adress` FROM `country` LIMIT 10; ``[example](https://i.imgur.com/PbwyCk6.png)
+5. `UCASE` - приводять строку до верхнього регістру `` SELECT UCASE(CONCAT_WS(', ', `continent`, `region`, `name`)) AS `adress` FROM `country` LIMIT 10; `` [example](https://i.imgur.com/Mopbmzn.png)
+6. `TRIM`, `LTRIM`, `RTRIM` - обрізає пробільні символи **TRIM** з кожного з боків, **LTRIN, RTRIM** - з лівого, та правого `` SELECT TRIM(`name`) AS `name` FROM `country` LIMIT 1; ``
+7. `CEIL` - округляє число в більше сторону `` SELECT `name`, `population`, CONCAT(FORMAT(`population` / `surfacearea`, 2), ' км²') AS density, CONCAT(CEIL(FORMAT(`population` / `surfacearea`, 2)), ' км²') AS density_ceil FROM `country` WHERE `population` > 10000000 ORDER BY `population` DESC LIMIT 10; `` - [example](https://i.imgur.com/W3i8bxh.png)
+8. `FLOOR` - протилежна функція, функції **CEIL**, тобто округлює в меншу сторону
+9. `ROUND` - робити округлення, за правилами математики [example](https://i.imgur.com/L5QBxCb.png)
+10. `NOW` - Для отримання поточного дати і часу `` SELECT CONCAT('Зараз: ', NOW()) AS `date_now` FROM `country` LIMIT `` [example](https://i.imgur.com/VrU0z3N.png)
+11. `DATE_FORMAT` - допоможе нам встановити потрібний форматат, дати та часу, в незалежності від локалі `` SELECT CONCAT('Зараз: ', DATE_FORMAT(NOW(), '%d-%m-%Y')) AS `date_now` FROM `country` LIMIT 1; `` [example](https://i.imgur.com/pKLJLUX.png)
+
+> ЦЕ лише маленька части на функцій, їх на багато більше, тому все буде з досвідом...
