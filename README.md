@@ -472,19 +472,21 @@ SELECT * FROM user_roles WHERE role = 'admin';
 
 - `` SELECT `name`, `region` FROM `country` WHERE `region` != 'Middle East' ORDER BY `name`; `` - цим запитом, ми відфільтрумо та покажемо всі регіони окрім 'Middle East', та сортуємо дані по полю `name` у алфавітному порядку
 
-- `` SELECT `name`, `population` FROM `country` WHERE `population` BETWEEN 100000000 AND 200000000 ORDER BY `population`; `` - тут ми застосували опереатор [`BETWEEN`](#8.-Оператори-роботи-з-діапазонами) - який допомже нам, зробити пошук в діапазоні, між країнами які знаходяться в діапазоні населення між 100 та 200 млн
+- `` SELECT `name`, `population` FROM `country` WHERE `population` BETWEEN 100000000 AND 200000000 ORDER BY `population`; `` - тут ми застосували опереатор [`BETWEEN`](#8-Оператори-роботи-з-діапазонами) - який допомже нам, зробити пошук в діапазоні, між країнами які знаходяться в діапазоні населення між 100 та 200 млн
 
-- `` SELECT `name`, `headofstate` FROM `country` WHERE `headofstate` = '' OR `headofstate` IS NULL; `` - це запит, знайомити нас з оператором [IS NULL](#6.-Оператори-роботи-з-NULL-значеннями) та з оператором [обєднання умов OR](#3.- Логічні-оператори) - та результат, буде таким, що нам виведе країни, де `headofstate` буде або пусте поле, або рівний `NULL`
+- `` SELECT `name`, `headofstate` FROM `country` WHERE `headofstate` = '' OR `headofstate` IS NULL; `` - це запит, знайомити нас з оператором [IS NULL](#6-Оператори-роботи-з-NULL-значеннями) та з оператором [обєднання умов OR](#3.- Логічні-оператори) - та результат, буде таким, що нам виведе країни, де `headofstate` буде або пусте поле, або рівний `NULL`
 
 - `` SELECT `name`, `indepyear` FROM `country` WHERE `indepyear` IS NOT NULL; `` - а ця команда, навпаки, покаже країни, де рік незалежності `indepyear` не є `NULL`
 
-- `` SELECT `region`, `name`, `population` FROM `country` WHERE `population` > 50000000 AND (`region` = 'Southeast Asia' OR `region` = 'Southern Europe') ORDER BY `population`; `` - тут вже запит більш складний, та використовує в собі як логічні оператори так і оператори порівняння. Також, ми можемо звернути увагу, що в нас є умови, які мі заключаємо в круглі дужки. Круглі дуєки, дозволдять нам, обмежити діапазон умови перевірки логічних операторів. Або ж розтавити приоріт їх виконання
+- `` SELECT `region`, `name`, `population` FROM `country` WHERE `population` > 50000000 AND (`region` = 'Southeast Asia' OR `region` = 'Southern Europe') ORDER BY `population`; `` - тут вже запит більш складний, та використовує в собі як логічні оператори [AND, OR](#3-Логічні-оператори) так і оператори порівняння. Також, ми можемо звернути увагу, що в нас є умови, які мі заключаємо в круглі дужки. Круглі дуєки, дозволдять нам, обмежити діапазон умови перевірки логічних операторів. Або ж розтавити приоріт їх виконання
 
-- `` SELECT `region`, `name`, `code`  FROM `country` WHERE `region` IN ('Southern Europe', 'Middle East') ORDER BY `region`; `` - тут ми використовуємо оператор [`IN`](#5.-Оператори-роботи-з-множинами) який дозволяє нам, перевірити, наявність чогось в обраній колонці
+- `` SELECT `region`, `name`, `code`  FROM `country` WHERE `region` IN ('Southern Europe', 'Middle East') ORDER BY `region`; `` - тут ми використовуємо оператор [`IN`](#5-Оператори-роботи-з-множинами) який дозволяє нам, перевірити, наявність чогось в обраній колонці
+
+- `` SELECT `region`, `name`, `code`, `population` FROM `country` WHERE `region` NOT IN ('Southern Europe', 'Middle East', 'Western Africa'); `` - запит з використанням [`NOT IN`](#5-Оператори-роботи-з-множинами) ідентичний запису [`IN`](#5-Оператори-роботи-з-множинами) - але результат його виокнання буде протилежний `IN`, тобто буде обирати всі записи ЗА ВИНЯТКОМ тих, які вказані в переліку
 
 ## Оператори в SQL
 
-### 1. Арифметичні оператори
+### 1 Арифметичні оператори
 
 Використовуються для виконання математичних операцій над числовими значеннями.
 
@@ -498,7 +500,7 @@ SELECT * FROM user_roles WHERE role = 'admin';
 SELECT price, price * 0.1 AS discount FROM products;
 ```
 
-### 2. Порівняльні оператори
+### 2 Порівняльні оператори
 
 Використовуються для порівняння двох значень.
 
@@ -513,7 +515,7 @@ SELECT price, price * 0.1 AS discount FROM products;
 SELECT * FROM employees WHERE salary > 50000;
 ```
 
-### 3. Логічні оператори
+### 3 Логічні оператори
 
 Використовуються для об'єднання декількох умов у запитах.
 
@@ -525,7 +527,7 @@ SELECT * FROM employees WHERE salary > 50000;
 SELECT * FROM employees WHERE department = 'IT' AND salary > 50000;
 ```
 
-### 4. Оператори роботи з рядками
+### 4 Оператори роботи з рядками
 
 Використовуються для роботи з рядковими значеннями.
 
@@ -537,7 +539,7 @@ SELECT * FROM employees WHERE department = 'IT' AND salary > 50000;
 SELECT * FROM customers WHERE first_name LIKE 'J%';
 ```
 
-### 5. Оператори роботи з множинами
+### 5 Оператори роботи з множинами
 
 Використовуються для перевірки значень в списках або підзапитах.
 
@@ -550,7 +552,7 @@ SELECT * FROM customers WHERE first_name LIKE 'J%';
 SELECT * FROM employees WHERE department IN ('IT', 'HR', 'Sales');
 ```
 
-### 6. Оператори роботи з NULL значеннями
+### 6 Оператори роботи з NULL значеннями
 
 Використовуються для роботи зі значеннями NULL.
 
@@ -561,7 +563,7 @@ SELECT * FROM employees WHERE department IN ('IT', 'HR', 'Sales');
 SELECT * FROM employees WHERE manager_id IS NULL;
 ```
 
-### 7. Оператори присвоєння
+### 7 Оператори присвоєння
 
 Використовуються для присвоєння значень змінним або колонкам.
 
@@ -571,7 +573,7 @@ SELECT * FROM employees WHERE manager_id IS NULL;
 UPDATE employees SET salary = salary * 1.1 WHERE department = 'IT';
 ```
 
-### 8. Оператори роботи з діапазонами
+### 8 Оператори роботи з діапазонами
 
 Використовуються для перевірки значень у певному діапазоні.
 
