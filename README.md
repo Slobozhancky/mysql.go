@@ -12,6 +12,7 @@
 10. [Оператор LIKE](#Оператор-LIKEE)
 11. [Обчислення полів та Аліаси](#Обчислення-полів-та-Аліаси)
 12. [Функції в MySQL](#Функції-в-MySQL)
+13. [Агрегатні функції в MySQL](#Агрегатні-функції-в-MySQL)
 
 ## Вступ до SQL
 
@@ -689,11 +690,11 @@ AND manager_id IS NOT NULL;
 
 ## Функції в MySQL
 
-1. За чим [посиланням](https://dev.mysql.com/doc/refman/8.4/en/built-in-function-reference.html) можна отриамти інфомрацію по всім існуючим функціям в MySQL
+1. За цим [посиланням](https://dev.mysql.com/doc/refman/8.4/en/built-in-function-reference.html) можна отриамти інфомрацію по всім існуючим функціям в MySQL
 2. `CONCAT_WS` - функція, яка допоможе обєднати строки, по певному сепаратору - `` SELECT CONCAT_WS(', ', `continent`, `region`, `name`) AS `adress` FROM `country` LIMIT 10; `` [example](https://i.imgur.com/oLa4bgZ.png)
 3. `FORMAT` - функція, яка приймає три аргументи (число, кількість цифр після коми, та локаль) `` SELECT `name`, `population`, CONCAT(FORMAT(`population` / `surfacearea`, 2), ' км²') AS density FROM `country` WHERE `population` > 10000000 ORDER BY `population` DESC LIMIT 10; `` [example](https://i.imgur.com/1ggq4sa.png)
 
-4. `LCASE`, `LOWER` - ідентичні функції, яки приводять строку до нижнього регістру `` SELECT LCASE(CONCAT_WS(', ', `continent`, `region`, `name`)) AS `adress` FROM `country` LIMIT 10; ``[example](https://i.imgur.com/PbwyCk6.png)
+4. `LCASE`, `LOWER` - ідентичні функції, яки приводять строку до нижнього регістру `` SELECT LCASE(CONCAT_WS(', ', `continent`, `region`, `name`)) AS `adress` FROM `country` LIMIT 10; `` [example](https://i.imgur.com/PbwyCk6.png)
 5. `UCASE` - приводять строку до верхнього регістру `` SELECT UCASE(CONCAT_WS(', ', `continent`, `region`, `name`)) AS `adress` FROM `country` LIMIT 10; `` [example](https://i.imgur.com/Mopbmzn.png)
 6. `TRIM`, `LTRIM`, `RTRIM` - обрізає пробільні символи **TRIM** з кожного з боків, **LTRIN, RTRIM** - з лівого, та правого `` SELECT TRIM(`name`) AS `name` FROM `country` LIMIT 1; ``
 7. `CEIL` - округляє число в більше сторону `` SELECT `name`, `population`, CONCAT(FORMAT(`population` / `surfacearea`, 2), ' км²') AS density, CONCAT(CEIL(FORMAT(`population` / `surfacearea`, 2)), ' км²') AS density_ceil FROM `country` WHERE `population` > 10000000 ORDER BY `population` DESC LIMIT 10; `` - [example](https://i.imgur.com/W3i8bxh.png)
@@ -703,3 +704,65 @@ AND manager_id IS NOT NULL;
 11. `DATE_FORMAT` - допоможе нам встановити потрібний форматат, дати та часу, в незалежності від локалі `` SELECT CONCAT('Зараз: ', DATE_FORMAT(NOW(), '%d-%m-%Y')) AS `date_now` FROM `country` LIMIT 1; `` [example](https://i.imgur.com/pKLJLUX.png)
 
 > ЦЕ лише маленька части на функцій, їх на багато більше, тому все буде з досвідом...
+
+## Агрегатні функції в MySQL
+
+Агрегатні функції у SQL виконують різні задачі для обробки та аналізу даних. Вони застосовуються до набору значень **(колонки або рядків)** і повертають єдине значення. Агрегатні функції дуже корисні для обчислення підсумкових даних, таких як суми, середні значення, максимальні та мінімальні значення тощо.
+
+Ось основні агрегатні функції і задачі, які вони виконують:
+
+1. **COUNT()**
+
+   - **Задача:** Підраховує кількість рядків у наборі результатів.
+   - **Приклад використання:**
+     ```sql
+     SELECT COUNT(*) FROM employees;
+     ```
+
+   > Тут є певна різниця з використанням оператора "\*", та з указанням конкретного поля
+   >
+   > "\*" - порахує всі рядки і видасть результат
+   > 'поле' - воно буде рахувати всі рядки, які не пусті, або НЕ NULL
+
+   `` SELECT COUNT(*) AS `with_zero`, COUNT(`lifeexpectancy`) AS with_row FROM `country`; `` [example](https://i.imgur.com/vBLVFsE.png)
+
+2. **SUM()**
+
+   - **Задача:** Обчислює суму значень у колонці.
+   - **Приклад використання:**
+     ```sql
+     SELECT SUM(salary) FROM employees;
+     ```
+
+3. **AVG()**
+
+   - **Задача:** Обчислює середнє значення у колонці.
+   - **Приклад використання:**
+     ```sql
+     SELECT AVG(salary) FROM employees;
+     ```
+
+4. **MAX()**
+
+   - **Задача:** Знаходить максимальне значення у колонці.
+   - **Приклад використання:**
+     ```sql
+     SELECT MAX(salary) FROM employees;
+     ```
+
+5. **MIN()**
+
+   - **Задача:** Знаходить мінімальне значення у колонці.
+   - **Приклад використання:**
+     ```sql
+     SELECT MIN(salary) FROM employees;
+     ```
+
+6. **GROUP_CONCAT()** (доступна в MySQL)
+   - **Задача:** Об'єднує значення з кількох рядків у одну строку.
+   - **Приклад використання:**
+     ```sql
+     SELECT GROUP_CONCAT(name) FROM employees;
+     ```
+
+Зупинився Урок 15 - 4:40
