@@ -472,11 +472,15 @@ SELECT * FROM user_roles WHERE role = 'admin';
 
 - `` SELECT `name`, `region` FROM `country` WHERE `region` != 'Middle East' ORDER BY `name`; `` - цим запитом, ми відфільтрумо та покажемо всі регіони окрім 'Middle East', та сортуємо дані по полю `name` у алфавітному порядку
 
-- `` SELECT `name`, `population` FROM `country` WHERE `population` BETWEEN 100000000 AND 200000000 ORDER BY `population`; `` - тут ми застосували опереатор [`BETWEEN`](#Оператори-роботи-з-діапазонами) - який допомже нам, зробити пошук в діапазоні, між країнами які знаходяться в діапазоні населення між 100 та 200 млн
+- `` SELECT `name`, `population` FROM `country` WHERE `population` BETWEEN 100000000 AND 200000000 ORDER BY `population`; `` - тут ми застосували опереатор [`BETWEEN`](#8.-Оператори-роботи-з-діапазонами) - який допомже нам, зробити пошук в діапазоні, між країнами які знаходяться в діапазоні населення між 100 та 200 млн
 
-- `` SELECT `name`, `headofstate` FROM `country` WHERE `headofstate` = '' OR `headofstate` IS NULL; `` - це запит, знайомити нас з оператором [IS NULL](#Оператори-роботи-з-NULL-значеннями) та з оператором [обєднання умов OR](#Логічні-оператори) - та результат, буде таким, що нам виведе країни, де `headofstate` буде або пусте поле, або рівний `NULL`
+- `` SELECT `name`, `headofstate` FROM `country` WHERE `headofstate` = '' OR `headofstate` IS NULL; `` - це запит, знайомити нас з оператором [IS NULL](#6.-Оператори-роботи-з-NULL-значеннями) та з оператором [обєднання умов OR](#3.- Логічні-оператори) - та результат, буде таким, що нам виведе країни, де `headofstate` буде або пусте поле, або рівний `NULL`
 
 - `` SELECT `name`, `indepyear` FROM `country` WHERE `indepyear` IS NOT NULL; `` - а ця команда, навпаки, покаже країни, де рік незалежності `indepyear` не є `NULL`
+
+- `` SELECT `region`, `name`, `population` FROM `country` WHERE `population` > 50000000 AND (`region` = 'Southeast Asia' OR `region` = 'Southern Europe') ORDER BY `population`; `` - тут вже запит більш складний, та використовує в собі як логічні оператори так і оператори порівняння. Також, ми можемо звернути увагу, що в нас є умови, які мі заключаємо в круглі дужки. Круглі дуєки, дозволдять нам, обмежити діапазон умови перевірки логічних операторів. Або ж розтавити приоріт їх виконання
+
+- `` SELECT `region`, `name`, `code`  FROM `country` WHERE `region` IN ('Southern Europe', 'Middle East') ORDER BY `region`; `` - тут ми використовуємо оператор [`IN`](#5.-Оператори-роботи-з-множинами) який дозволяє нам, перевірити, наявність чогось в обраній колонці
 
 ## Оператори в SQL
 
