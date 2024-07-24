@@ -13,6 +13,7 @@
 11. [Обчислення полів та Аліаси](#Обчислення-полів-та-Аліаси)
 12. [Функції в MySQL](#Функції-в-MySQL)
 13. [Агрегатні функції в MySQL](#Агрегатні-функції-в-MySQL)
+14. [Групування даних](#Групування-даних)
 
 ## Вступ до SQL
 
@@ -688,6 +689,8 @@ AND manager_id IS NOT NULL;
 
 - Також псевдоніми, можна використовувати і без ключового слова `AS` - SELECT CONCAT_WS(', ', `continent`, `region`, `name`) AS `adress` FROM `country` LIMIT 10;
 
+- Тут ще слід згадати про "проблеми в аліасах", а саме те що Aliases не можна використовувати в ключовому слові `WHERE`. Причиною чому є те, який [порядок виконання запитів в SQL](<https://learn.microsoft.com/ru-ru/previous-versions/sql/sql-server-2014/ms189499(v=sql.120)?redirectedfrom=MSDN#%D0%BB%D0%BE%D0%B3%D0%B8%D1%87%D0%B5%D1%81%D0%BA%D0%B8%D0%B9-%D0%BF%D0%BE%D1%80%D1%8F%D0%B4%D0%BE%D0%BA-%D0%BE%D0%B1%D1%80%D0%B0%D0%B1%D0%BE%D1%82%D0%BA%D0%B8-%D0%B8%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D0%B8%D0%B8-select>) - в цій статі ми можемо побачити, що виконання SELECT відбувається після того, як будуть виконані ці етапи `FROM`, `ON`, `JOIN`, `WHERE`, `GROUP BY`, `WITH CUBE или WITH ROLLUP`, `HAVING`
+
 ## Функції в MySQL
 
 1. За цим [посиланням](https://dev.mysql.com/doc/refman/8.4/en/built-in-function-reference.html) можна отриамти інфомрацію по всім існуючим функціям в MySQL
@@ -781,3 +784,77 @@ AND manager_id IS NOT NULL;
      ```
 
    > Слід зазначити, що ці всі агрегатні функції, можна комбінувати без проблем, тобто, відразу всі їх вивести - `` SELECT MIN(`population`), MAX(`population`), AVG(`population`), SUM(`population`), COUNT(*) FROM `country`; `` - [example](https://i.imgur.com/vadf03x.png)
+
+## Групування даних
+
+> Тут варто упомянути те, який воконується [порядок для проставляння ключових слів](https://foxminded.ua/sql-zapyty/), при виконанні запиту:
+
+1. **Агрегування Даних**:
+
+   - Групування дозволяє виконувати агрегатні функції (як-от `SUM`, `AVG`, `COUNT`, `MIN`, `MAX`) на підмножинах даних. Це допомагає підраховувати, обчислювати середнє значення, знаходити мінімум або максимум для кожної групи.
+
+   Приклад:
+
+   ```sql
+   SELECT department, COUNT(employee_id) AS num_employees
+   FROM employees
+   GROUP BY department;
+   ```
+
+   Цей запит підраховує кількість працівників у кожному відділі.
+
+   - Написав простенький приклад, для групуваннях даних, з використанням агрегатних функцій `` SELECT `order_id`, SUM(`quantity`) AS `product_quantity`, `price`, SUM(`price` * `quantity`) AS `total_amount` FROM `oc_order_product` GROUP BY `order_id`; `` - [example](https://i.imgur.com/ulUt9cG.png)
+
+2. **Зведені Таблиці (Pivot Tables)**:
+
+   - Групування дозволяє створювати зведені таблиці, де дані згруповані за одним або кількома атрибутами для більш детального аналізу.
+
+   Приклад:
+
+   ```sql
+   SELECT department, SUM(salary) AS total_salary
+   FROM employees
+   GROUP BY department;
+   ```
+
+   Цей запит обчислює загальну суму заробітної плати для кожного відділу.
+
+3. **Фільтрація Агрегованих Даних**:
+
+   - Використання `HAVING` з `GROUP BY` дозволяє фільтрувати групи на основі умов, застосованих до агрегатних функцій.
+
+   Приклад:
+
+   ```sql
+   SELECT department, COUNT(employee_id) AS num_employees
+   FROM employees
+   GROUP BY department
+   HAVING COUNT(employee_id) > 10;
+   ```
+
+   Цей запит повертає відділи з більш ніж 10 працівниками.
+
+4. **Аналіз Трендів та Патернів**:
+
+   - Групування даних допомагає виявити тренди та патерни в даних, що корисно для бізнес-аналітики та прийняття рішень.
+
+   Приклад:
+
+   ```sql
+   SELECT YEAR(order_date) AS year, COUNT(order_id) AS num_orders
+   FROM orders
+   GROUP BY YEAR(order_date);
+   ```
+
+   Цей запит підраховує кількість замовлень за кожен рік.
+
+5. Сюди варто включити й фільтрування даних, для цього використовується ключове слово `HAVING`. Воно схоже з ключовим словом `WHERE`, але на відміну від `WHERE`, `HAVING` - використовується для згрупованих даних
+
+- Приклад такого запиту, з використанням `HAVING` - дозволить нам, отримати згруповані дані за полем `total_amount` (яке до речі було у нас створено як аліас, після виконання агнрегатної функції), таким чином,Ю щоб ми отримати `total_amount` в діапазоні від 1000 до 2000 - [example](https://i.imgur.com/b6qR9bF.png)
+
+```sql
+SELECT `order_id`, SUM(`quantity`) AS `product_quantity`, `price`, SUM(`price` * `quantity`) AS `total_amount`
+FROM `oc_order_product`
+GROUP BY `order_id`
+HAVING `total_amount` BETWEEN  1000 AND 2000 ;
+```
