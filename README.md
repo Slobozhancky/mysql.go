@@ -724,15 +724,21 @@ AND manager_id IS NOT NULL;
    > "\*" - порахує всі рядки і видасть результат
    > 'поле' - воно буде рахувати всі рядки, які не пусті, або НЕ NULL
 
-   `` SELECT COUNT(*) AS `with_zero`, COUNT(`lifeexpectancy`) AS with_row FROM `country`; `` [example](https://i.imgur.com/vBLVFsE.png)
+   `` SELECT COUNT(*) AS `with_asterisk`, COUNT(`lifeexpectancy`) AS with_row FROM `country`; `` [example](https://i.imgur.com/vBLVFsE.png)
 
 2. **SUM()**
 
    - **Задача:** Обчислює суму значень у колонці.
    - **Приклад використання:**
+
      ```sql
      SELECT SUM(salary) FROM employees;
      ```
+
+     `` SELECT SUM(`population`) AS `sum_of_population` FROM `country` `` - [example](https://i.imgur.com/aX8DfOX.png)
+
+     - Також на цьмоу прикладі, ми зможемо побачити, яку проблему вирішують агрегатні функції. [example](https://i.imgur.com/1MzUrcO.png) - тут якщо ми отримаємо через SQL запит інфомрацію, про замовелння з `order_id = 1`, ми побачимо замовлення, в якому є три товари і кожен товар, має свою вартість, у вигляді `` `(`quantity` * `price`) AS `products_total_amount` `` - і далі звісно в ручну, суму кожного товару рахувати буде не зручно
+     - Вирішенням цієї проблеми, буде використання функції `SUM` - яка буде рахувати суму всіз значень в обраній колонці - [example](https://i.imgur.com/h3Y4doI.png)
 
 3. **AVG()**
 
@@ -741,6 +747,7 @@ AND manager_id IS NOT NULL;
      ```sql
      SELECT AVG(salary) FROM employees;
      ```
+   - Досить просто функція, яка дбуде виводити середнє значення по колонці: `` SELECT AVG(`population`) AS `AVG` FROM `country`; `` [example](https://i.imgur.com/9py51h2.png)
 
 4. **MAX()**
 
@@ -754,15 +761,23 @@ AND manager_id IS NOT NULL;
 
    - **Задача:** Знаходить мінімальне значення у колонці.
    - **Приклад використання:**
+
      ```sql
      SELECT MIN(salary) FROM employees;
      ```
 
+     > слід враховувати такий нюанс, що немає сенсу, перед застосуванням агрегатної функції, використовувати вивід якихосб полів. Через те що, нам просто поверне перші значення з таблиці, ну і результат виконання самої агрегатної функції. Щоб нам отримати потрібний результат пошуку, от наприклад як у прикладі `` SELECT `name`, `price` FROM `oc_order_product` WHERE `price` = (SELECT MAX(`price`) FROM `oc_order_product`) LIMIT 1; `` - що дозволить нам отримати назву товару, який у таблиці має найбільше ціну. Тут виходить так, що ми робимо запит в якому будемо виводити потрібні нам поля. А там де буде перевірка WHERE ми робимо ще один запит, щоб отримати результат для агрегатної функції. [example](https://i.imgur.com/zwFGgdm.png)
+
+     > Або ж такий, дуже очевидний та простий спосіб `` SELECT `name`, `price` FROM `oc_order_product` ORDER BY `price` DESC LIMIT 1; `` - [example](https://i.imgur.com/eJa0FRy.png)
+
+     > Якщо говорити за застосування функцій MIN та MAX, для текстових значень, то дані будуть виводитись у алфавітному порядку
+
 6. **GROUP_CONCAT()** (доступна в MySQL)
+
    - **Задача:** Об'єднує значення з кількох рядків у одну строку.
    - **Приклад використання:**
      ```sql
      SELECT GROUP_CONCAT(name) FROM employees;
      ```
 
-Зупинився Урок 15 - 4:40
+   > Слід зазначити, що ці всі агрегатні функції, можна комбінувати без проблем, тобто, відразу всі їх вивести - `` SELECT MIN(`population`), MAX(`population`), AVG(`population`), SUM(`population`), COUNT(*) FROM `country`; `` - [example](https://i.imgur.com/vadf03x.png)
