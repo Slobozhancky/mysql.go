@@ -14,6 +14,7 @@
 12. [Функції в MySQL](#Функції-в-MySQL)
 13. [Агрегатні функції в MySQL](#Агрегатні-функції-в-MySQL)
 14. [Групування даних](#Групування-даних)
+15. [Підзапити](#Підзапити)
 
 ## Вступ до SQL
 
@@ -858,3 +859,166 @@ FROM `oc_order_product`
 GROUP BY `order_id`
 HAVING `total_amount` BETWEEN  1000 AND 2000 ;
 ```
+
+## Підзапити
+
+### Що таке підзапити?
+
+Підзапит (subquery), також відомий як вкладений запит (nested query), — це запит SQL, який міститься всередині іншого запиту. Підзапит може бути розміщений у таких місцях, як `SELECT`, `FROM`, `WHERE`, `HAVING`, або навіть у виразі `JOIN`.
+
+> По приорітету, спочатку має бути виконаний "підзапит", а вже потім буде виконуватись "запит обгортка"
+
+### Для чого потрібні підзапити?
+
+Підзапити використовуються для виконання складних операцій, які не можна легко реалізувати за допомогою одного простого запиту. Вони дозволяють:
+
+1. **Витягти дані для основного запиту**:
+   - Підзапити можуть витягати дані, які будуть використані в основному запиті.
+
+2. **Фільтрувати результати**:
+   - Підзапити можуть бути використані для створення умов фільтрації в `WHERE` або `HAVING` клаузах.
+
+3. **Обчислення та агрегування**:
+   - Підзапити дозволяють обчислювати значення, які потім використовуються у основному запиті.
+
+4. **Створення тимчасових таблиць**:
+   - Підзапити можуть створювати тимчасові таблиці, які використовуються для подальших операцій.
+
+### Як працювати з підзапитами?
+
+#### Основні типи підзапитів
+
+1. **Підзапити у `SELECT`**
+
+   Використовуються для обчислення значень, які відображаються в основному запиті.
+   
+   ```sql
+   SELECT employee_id, (SELECT MAX(salary) FROM employees) AS max_salary
+   FROM employees;
+   ```
+
+2. **Підзапити у `FROM`**
+
+   Використовуються для створення тимчасових таблиць.
+   
+   ```sql
+   SELECT sub.department, sub.avg_salary
+   FROM (
+       SELECT department, AVG(salary) AS avg_salary
+       FROM employees
+       GROUP BY department
+   ) sub;
+   ```
+
+3. **Підзапити у `WHERE`**
+
+   Використовуються для фільтрації рядків на основі значень з іншої таблиці або запиту.
+   
+   ```sql
+   SELECT employee_id, name
+   FROM employees
+   WHERE department_id IN (SELECT id FROM departments WHERE name = 'Sales');
+   ```
+
+4. **Підзапити у `HAVING`**
+
+   Використовуються для фільтрації груп після агрегатних функцій.
+   
+   ```sql
+   SELECT department, AVG(salary) AS avg_salary
+   FROM employees
+   GROUP BY department
+   HAVING AVG(salary) > (SELECT AVG(salary) FROM employees);
+   ```
+
+### Приклади використання підзапитів
+
+1. **Підзапит у `SELECT`**
+
+   Підрахунок середньої заробітної плати для кожного працівника порівняно з середньою заробітною платою у всій компанії.
+   
+   ```sql
+   SELECT name, salary, 
+          (SELECT AVG(salary) FROM employees) AS avg_company_salary
+   FROM employees;
+   ```
+
+2. **Підзапит у `FROM`**
+
+   Отримання середньої зарплати по відділах з деталізацією по кожному працівнику.
+   
+   ```sql
+   SELECT e.name, e.salary, d.avg_salary
+   FROM employees e
+   JOIN (
+       SELECT department_id, AVG(salary) AS avg_salary
+       FROM employees
+       GROUP BY department_id
+   ) d ON e.department_id = d.department_id;
+   ```
+
+3. **Підзапит у `WHERE`**
+
+   Вибір працівників, які працюють у відділах з більш ніж 10 працівниками.
+   
+   ```sql
+   SELECT name
+   FROM employees
+   WHERE department_id IN (
+       SELECT department_id
+       FROM employees
+       GROUP BY department_id
+       HAVING COUNT(*) > 10
+   );
+   ```
+
+### Приклади
+
+1. Цей приклад, дозволить нам отримати дані з таблиці `country`, а саме назву країни, в якій мовою є `English`. А саму перевірку, будемо робити по коду з таблиці `country`, з кодом з такблиці `countrylanguage`
+
+```sql
+   SELECT `code`, `name` 
+   FROM `country` 
+   WHERE `code` IN (
+      SELECT CountryCode 
+      FROM `countrylanguage` 
+      WHERE `Language`='english');
+```
+[example](https://i.imgur.com/xuCDGnA.png)
+
+2. Цей приклад, дозволить обєднгати дві таблиці, діставши мову країни, з таблиці `countrylanguage`
+
+```sql
+SELECT `code`, `name`, 
+       (SELECT `Language` 
+        FROM `countrylanguage` 
+        WHERE `CountryCode` = `country`.`code` 
+        LIMIT 1) AS `language_list`
+FROM `country`;
+```
+
+[example](https://i.imgur.com/HazeGXt.png)
+
+3. Тут же ми будемо рохувати суму кожного з замовлень покупця, з електроною адреою `vasya@mail.com`, та будемо групувати суму кожного замовелння пой ого `order_id`. А якщо ми просто приберемо `GROUP BY order_id` то результатом отримаємо суму всіх замовлень покупця
+
+```sql
+SELECT order_product_id, order_id, quantity, price, total, SUM(`total`) AS grand_total 
+FROM oc_order_product 
+WHERE order_id IN (SELECT order_id FROM oc_order WHERE email="vasya@mail.com") 
+GROUP BY `order_id`
+```
+
+4. В даному прикладі, ми трішки зіштовхнемось з обєднанням таблиць. А саме, задача, буде така, щоб порахувати суму всіх замовлень покупців, та показати до кожного замовлення електрону адресу покупця, який зробив замовлення
+
+Проте, особливість цього запиту буде в тому, що ми будемо робити порівняння в таблицях `oc_order_product`, та `oc_order`, по полю `order_id`
+Тут ще слід звернути, як саме відбувається обєднання. Тобто, ми звертаємось до `order_id` кожної із таблиць `oc_order_product.order_id = oc_order.order_id`
+
+```sql
+SELECT `order_id`, `quantity`, price, SUM(total) AS grand_total, 
+   (SELECT `email` FROM oc_order WHERE oc_order_product.order_id = oc_order.order_id) AS email
+FROM oc_order_product 
+GROUP BY order_id 
+ORDER BY grand_total DESC;
+```
+
+[example](https://i.imgur.com/cQhqOKa.png)
