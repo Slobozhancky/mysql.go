@@ -1116,5 +1116,40 @@ WHERE Orders.CustomerId = Customers.Id
 AND Orders.ProductId = Products.Id;
 ```
 
-
 [example](https://i.imgur.com/lelsmFM.png)
+
+3. Нижче приведений ідентичний приклад, до прикладу під номером 1, але вже з використанням `INNER JOIN`, абож `INNER JOIN` ідентичний просто `JOIN`
+
+```sql
+SELECT city.`Name` AS `city_name`, country.`Name` AS contry_name 
+FROM city JOIN country 
+ON city.CountryCode = country.`Code`;
+```
+
+4. Запит наче і прости, але я затупив в ньому в тому, що як відбувається приєднання таблиці, то слід приєднувати таблиці не через `AND`, а через `JOIN` і на кожному `JOIN` слід пропиисувати умову, за якими признгаками, будемо ці таблиці обєднувати
+
+```sql
+SELECT city.`Name`, country.`Name` AS `country`, countrylanguage.`Language`
+FROM country
+JOIN city ON country.`Code` = city.CountryCode
+JOIN countrylanguage ON city.CountryCode = countrylanguage.CountryCode 
+WHERE countrylanguage.IsOfficial = "T";
+```
+
+[example](https://i.imgur.com/zfvUqvN.png)
+
+5. В цих двох запитах, намагався працювати з `LEFT, RIGHT JOIN`. Та якраз у випадку RIGHT JOIN, можна чітко бачити приклад, що як таблиця з ліва, у нашому випадку це таблиці `Products`, `Products` не мають відповідності до таблиці з права `Orders` то ми отримаємо у відповідь `NULL`
+
+```sql
+SELECT Orders.Id, Orders.CreatedAt, Products.ProductName, Customers.FirstName
+FROM Orders
+LEFT JOIN Products ON Orders.ProductId = Products.Id
+LEFT JOIN Customers ON Orders.CustomerId = Customers.Id;
+
+SELECT Orders.Id, Orders.CreatedAt, Products.ProductName, Customers.FirstName
+FROM Orders
+RIGHT JOIN с ON Orders.ProductId = Products.Id
+RIGHT JOIN Customers ON Orders.CustomerId = Customers.Id;
+```
+
+[example](https://i.imgur.com/aZzdqNb.png)
